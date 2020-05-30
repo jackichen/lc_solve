@@ -44,7 +44,7 @@ public:
                 for (auto left : trees[left_count]) {
                     for (auto right : trees[right_count]) {
                         TreeNode* root = new TreeNode(root_val);
-                        root->left = copyTree(left, 0);
+                        root->left = left; // copyTree(left, 0); we can share the left subtree in memory
                         root->right = copyTree(right, root_val);
                         roots.push_back(root);
                     }
