@@ -1,3 +1,41 @@
+// use multiset to order automatically and an iterator point to the median position
+// 执行用时 :292 ms, 在所有 C++ 提交中击败了40.89%的用户
+// 内存消耗 :44.2 MB, 在所有 C++ 提交中击败了22.22%的用户
+// give hehe to the test program
+class MedianFinder {
+    multiset<int> data;
+    multiset<int>::iterator median;
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {}
+
+    void addNum(int num) {
+        // O(logN)
+        data.insert(num);
+
+        size_t count = data.size();
+        if (count == 1)
+            median = data.begin();
+        else if (num < *median) { // left part increase
+            if (count & 1)
+               --median;
+        } else { // right part increase
+            if (!(count & 1))
+                ++median;
+        }
+    }
+
+    double findMedian() {
+        if (data.empty()) return 0;
+        else if (data.size() & 1) return *median;
+        else {
+            double sum = *median;
+            sum += *prev(median);
+            return sum / 2;
+        }
+    }
+};
+
 // use two heaps
 // left heap(maximum) stores left part of median
 // right heap(minimum) stores right part of median
