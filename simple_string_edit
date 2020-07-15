@@ -1,0 +1,60 @@
+#include<iostream>
+#include<string>
+#include<unordered_map>
+using namespace std;
+
+bool can_edit(const string& s, const string& t,
+              unordered_map<char, int>& pattern_hash, size_t s_pos, size_t t_pos)
+{
+    if (s_pos == s.size()) {
+        if (t_pos == t.size())
+            return true;
+
+        auto ch = t[t_pos];
+        if (pattern_hash.count(ch)) {
+            --pattern_hash[ch];
+            if (pattern_hash[ch] == 0)
+                pattern_hash.erase(ch);
+            return can_edit(s, t, pattern_hash, s_pos, ++t_pos);
+        }
+        return false;
+    } else if (t_pos == t.size()) {
+        // source is longer than target, it is impossible make target from source
+        return false;
+    } else if (s[s_pos] == t[t_pos]) {
+        // no operation here
+        // move source and target forward
+        return can_edit(s, t, pattern_hash, ++s_pos, ++t_pos);
+    } else if (!pattern_hash.count(t[t_pos])) {
+        // can not find character from p to insert here
+        return false;
+    } else {
+        // erase an character from p and insert to source
+        // move target forward
+        auto ch = t[t_pos];
+        --pattern_hash[ch];
+        if (pattern_hash[ch] == 0)
+            pattern_hash.erase(ch);
+        return can_edit(s, t, pattern_hash, s_pos, ++t_pos);
+    }
+}
+
+int main()
+{
+    int query_count = 0;
+    cin >> query_count;
+    for (int i=0; i<query_count; ++i) {
+        unordered_map<char, int> pattern_hash;
+        string s, t, p;
+        cin >> s >> t >> p;
+        for (auto ch : p) {
+            if (pattern_hash.count(ch)) {
+                ++pattern_hash[ch];
+            } else {
+                pattern_hash[ch] = 1;
+            }
+        }
+        cout << (can_edit(s, t, pattern_hash, 0, 0) ? "YES" : "NO") << endl;
+    }
+    return 0;
+}
